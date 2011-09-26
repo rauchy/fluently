@@ -1,10 +1,10 @@
 require 'minitest/spec'
 require 'minitest/autorun'
 
-describe "fluently_def" do
+describe "def_fluently" do
   it "defines a simple instance method" do
 		instance = Class.new do 
-			fluently_def 'foo' do
+			def_fluently 'foo' do
 				"Bar!"
 			end
 		end.new
