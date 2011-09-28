@@ -13,7 +13,7 @@ describe "def_fluently" do
 			instance.foo.must_equal "Bar!"
 		end
 		
-		it "defines a method with parameters" do
+		it "defines a method with normal parameters" do
 			instance = Class.new do 
 				def_fluently 'foo' do |name|
 					"Hello, #{name}!"
@@ -31,6 +31,16 @@ describe "def_fluently" do
 			end.new
 
 			instance.beware_of_mercury_poisoning.must_equal "Bar!"
+		end
+
+		it "defines a method with a single inline parameter" do
+			instance = Class.new do
+				def_fluently 'multiply $n by two' do |n|
+					n * 2
+				end
+			end.new
+
+			instance.multiply(21).by_two.must_equal 42
 		end
 	end
 end	
