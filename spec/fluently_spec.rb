@@ -15,12 +15,12 @@ describe "def_fluently" do
 		
 		it "defines a method with normal parameters" do
 			instance = Class.new do 
-				deff 'foo' do |name|
+				deff 'say_hello_to' do |name|
 					"Hello, #{name}!"
 				end
 			end.new
 
-			instance.foo("rauchy").must_equal "Hello, rauchy!"
+			instance.say_hello_to("rauchy").must_equal "Hello, rauchy!"
 		end
 
 		it "defines a multi-word method" do
@@ -52,5 +52,15 @@ describe "def_fluently" do
 
 			instance.concat('omer', 'rauchwerger').and_capitalize.must_equal 'Omer Rauchwerger'
 		end
+
+#		it "defines a method with two inconsecutive inline parameters" do 
+#			instance = Class.new do
+#				deff 'concat $first_name and $last_name and capitalize' do |first_name, last_name|
+#					"#{first_name.capitalize} #{last_name.capitalize}"
+#				end
+#			end.new
+#
+#			instance.concat('omer').and('rauchwerger').and_capitalize.must_equal 'Omer Rauchwerger'
+#		end
 	end
 end	
