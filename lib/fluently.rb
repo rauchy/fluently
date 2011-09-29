@@ -2,31 +2,31 @@ require 'pry'
 
 module Kernel
 	def def_fluently(method_name, &block)
-	  words = method_name.split(' ')
+		words = method_name.split(' ')
 
 		method_name = ""
 		while words.first =~ /^[^\$]/
 			method_name += "#{words.delete_at(0)} "
 		end
-		method_name.strip!
+		method_name =	method_name.strip.gsub(/\s/,'_').downcase
 
 		if words.any?
-			parameter_name = words.delete_at(0)[1..-1]
+			words.delete_at(0) while words.any? && words.first =~ /^\$/
 			sub_method_name = words.join(' ')
 
 			obj = Class.new do
-				def initialize(param)
-					@param = param
+				def initialize(params)
+					@params = params
 				end
 
-				def_fluently(sub_method_name, &proc { block.curry[@param] })
+				def_fluently(sub_method_name, &lambda { block.curry[*@params] })
 			end
 
-		  method_name =	method_name.strip.gsub(/\s/,'_').downcase
-			self.send :define_method, method_name, proc { |x| obj.new(x) }
+			inner_block = lambda { |*params| obj.new(params) }
 		else
-		  method_name =	method_name.strip.gsub(/\s/,'_').downcase
-			self.send :define_method, method_name, &block
+			inner_block = block
 		end
+		self.send :define_method, method_name, inner_block
 	end
+	alias_method :deff, :def_fluently
 end
