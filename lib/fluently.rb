@@ -1,37 +1,57 @@
 require 'pry'
 
-module Kernel
-	def def_fluently(method_name, parameter_index=0, &block)
-		words = method_name.split(' ')
+class Temp
+	attr_accessor :saved_params
 
-		method_name = ""
-		while words.first =~ /^[^\$]/
-			method_name += "#{words.delete_at(0)} "
-		end
-		method_name =	method_name.strip.gsub(/\s/,'_').downcase
-
-		if words.any?
-			inner_arity = 0
-			while words.any? && words.first =~ /^\$/
-				words.delete_at(0)
-				inner_arity += 1
-			end
-
-			sub_method_name = words.join(' ')
-
-			obj = Class.new do
-				def initialize(params)
-					@params = params
-				end
-
-				def_fluently(sub_method_name, parameter_index+inner_arity, &lambda { block.curry[*(@params.take(inner_arity))] })
-			end
-
-			inner_block = lambda { |*params| obj.new(params) }
-		else
-			inner_block = block
-		end
-		self.send :define_method, method_name, inner_block
+	def initialize
+		@saved_params = []
 	end
+end
+
+module Kernel
+	def def_fluently(method_name, &block)
+		current_object = self
+
+		methods = split_methods(method_name)
+		methods.reverse.each_with_index do |method, index|
+			is_first = index == methods.size - 1
+			is_last = index == 0
+			is_single = is_first && is_last
+
+			if is_single
+				self.send(:define_method, method, block)
+			elsif is_first
+				self.send(:define_method, method) do |*params|
+					current_object.saved_params = params
+					current_object
+				end
+			elsif is_last
+				current_object = Temp.new
+				(class << current_object ; self ; end).instance_eval do
+					define_method(method) do |*params|
+						block.call(*self.saved_params)
+					end
+				end
+		else
+			obj = Temp.new
+			next_object = current_object.clone
+			(class << obj; self; end).instance_eval do
+				define_method(method) do |*params|
+					next_object.saved_params = self.saved_params + params
+					next_object
+				end
+			end
+			current_object = obj
+	end
+end
+	end
+
+	private
+
+	def split_methods(complete_method_declaration)
+		method_declarations = complete_method_declaration.split(/((?:.*?\s)(?:\$\S*\s)+|.*$)/).reject {|x| x == ""}
+		method_declarations.map { |x| x.split(' $').first.strip.gsub(' ', '_') }
+	end
+
 	alias_method :deff, :def_fluently
 end

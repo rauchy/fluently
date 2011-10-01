@@ -1,5 +1,6 @@
 require 'minitest/spec'
 require 'minitest/autorun'
+require './lib/fluently'
 
 describe "def_fluently" do
 	describe "for instance methods" do
@@ -12,7 +13,7 @@ describe "def_fluently" do
 
 			instance.foo.must_equal "Bar!"
 		end
-		
+
 		it "defines a method with normal parameters" do
 			instance = Class.new do 
 				deff 'say_hello_to' do |name|
@@ -53,14 +54,14 @@ describe "def_fluently" do
 			instance.concat('omer', 'rauchwerger').and_capitalize.must_equal 'Omer Rauchwerger'
 		end
 
-#		it "defines a method with two inconsecutive inline parameters" do 
-#			instance = Class.new do
-#				deff 'concat $first_name and $last_name and capitalize' do |first_name, last_name|
-#					"#{first_name.capitalize} #{last_name.capitalize}"
-#				end
-#			end.new
-#
-#			instance.concat('omer').and('rauchwerger').and_capitalize.must_equal 'Omer Rauchwerger'
-#		end
+		it "defines a method with two inconsecutive inline parameters" do 
+			instance = Class.new do
+				deff 'concat $first_name and $last_name and capitalize' do |first_name, last_name|
+					"#{first_name.capitalize} #{last_name.capitalize}"
+				end
+			end.new
+
+			instance.concat('omer').and('rauchwerger').and_capitalize.must_equal 'Omer Rauchwerger'
+		end
 	end
 end	
