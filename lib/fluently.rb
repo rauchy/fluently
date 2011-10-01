@@ -1,3 +1,6 @@
+require 'fluently/class_extensions'
+require 'fluently/object'
+
 module Fluently
 	def self.split_methods(complete_method_declaration)
 		method_declarations = complete_method_declaration.split(/((?:.*?\s)(?:\$\S*\s)+|.*$)/).reject {|x| x == ""}
