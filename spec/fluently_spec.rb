@@ -1,6 +1,5 @@
 require 'minitest/spec'
 require 'minitest/autorun'
-require './lib/fluently'
 
 describe "def_fluently" do
 	describe "for instance methods" do
