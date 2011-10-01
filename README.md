@@ -17,3 +17,13 @@ What the hell is "**transfer 5.0 buyer@example.com seller@example.com**"? A read
 And then use it this way:
 
     foo.transfer(5.0).from('buyer@example.com').to('seller@example.com')
+
+### deff
+
+If you find ```def_fluently``` too verbose, you can use a synonym called ```deff```:
+
+    class Foo
+      deff 'multiply $n by two' do |n|
+        n * 2
+      end
+    end
