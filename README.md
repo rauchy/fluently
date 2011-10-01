@@ -8,6 +8,8 @@ Method parameters in Ruby are always supplied at the end of the sentence. For ex
 
 What the hell is "**transfer 5.0 buyer@example.com seller@example.com**"? A readable alternative to this would be **transfer 5.0 from buyer@example.com to seller@example.com**. Well, with fluently, you can easily declare such an interface, using this syntax:
 
+    require 'fluently'
+
     class Foo
       def_fluently 'transfer $price from $buyer to $seller' do |price, buyer, seller|
         # ...
@@ -21,6 +23,8 @@ And then use it this way:
 ### deff
 
 If you find ```def_fluently``` too verbose, you can use a synonym called ```deff```:
+
+    require 'fluently'
 
     class Foo
       deff 'multiply $n by two' do |n|
